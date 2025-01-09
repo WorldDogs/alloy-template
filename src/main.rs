@@ -1,7 +1,8 @@
 use alloy::{
-    primitives::{address, Address}, providers::{Provider, ProviderBuilder}, sol
+    primitives::{address, Address}, providers::{Provider, ProviderBuilder, RootProvider}, sol, transports::http::{Client, Http}
 };
 use clap::Parser;
+use Fluid::FluidInstance;
 
 
 sol!(
@@ -16,6 +17,7 @@ pub struct Args {
     #[arg(short, long)]
     addr: Address,
 }
+type FluidInstanceTp = Fluid::FluidInstance<Http<Client>, RootProvider<Http<Client>>>;
 
 #[tokio::main]
 async fn main() {
@@ -33,4 +35,11 @@ async fn main() {
     println!("Name: {}", name._0);
 
     // calc balance 
+    let balance = fluid.balanceOf(args.addr).call().await.unwrap();
+}
+
+async fn get_balance(addr: Address, fluid: FluidInstanceTp) -> u64 {
+    let name = fluid.name().call().await.unwrap();
+    println!("Name: {}", name._0);
+    0
 }
